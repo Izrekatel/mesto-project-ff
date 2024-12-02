@@ -7,22 +7,31 @@ function addCardTemplateClone() {
     return cardElement;
 }
 
-function addCardDeleteButtonListener(cardElement) {
-    const cardDeleteButton = cardElement.querySelector('.card__delete-button');
-    cardDeleteButton.addEventListener('click', function () {
-        cardElement.remove();
-    });
+function deleteCard(cardElement) {
+    cardElement.remove();
 }
 
-function addCard(link, name) {
+function addCardDeleteButtonListener(cardElement) {
+    const cardDeleteButton = cardElement.querySelector('.card__delete-button');
+    cardDeleteButton.addEventListener('click', () => deleteCard(cardElement));
+}
+
+function fillCard(link, name) {
     const cardElement = addCardTemplateClone();
-    cardElement.querySelector('.card__image').src = link;
+    cardImage = cardElement.querySelector('.card__image');
+    cardImage.src = link;
+    cardImage.alt = name;
     cardElement.querySelector('.card__title').textContent = name;
+    return cardElement;
+}
+
+function addCard(cardElement) {
     cardContainer.append(cardElement);
     addCardDeleteButtonListener(cardElement);
     return cardElement;
 }
 
 initialCards.forEach(function (element) {
-    addCard(element.link, element.name);
+    const createdCard = fillCard(element.link, element.name);
+    addCard(createdCard);
 });
