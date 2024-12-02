@@ -5,14 +5,14 @@ function addCardTemplateClone() {
     const cardTemplate = document.querySelector('#card-template').content;
     const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
     return cardElement;
-};
+}
 
 function addCardDeleteButtonListener(cardElement) {
     const cardDeleteButton = cardElement.querySelector('.card__delete-button');
     cardDeleteButton.addEventListener('click', function () {
         cardElement.remove();
     });
-};
+}
 
 function addCard(link, name) {
     const cardElement = addCardTemplateClone();
@@ -21,7 +21,7 @@ function addCard(link, name) {
     cardContainer.append(cardElement);
     addCardDeleteButtonListener(cardElement);
     return cardElement;
-};
+}
 
 initialCards.forEach(function (element) {
     addCard(element.link, element.name);
