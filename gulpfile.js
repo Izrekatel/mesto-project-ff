@@ -31,7 +31,7 @@ function html() {
     keepClosingSlash: true,
   };
   return gulp
-    .src('./**/*.html')
+    .src('./src/**/*.html')
     .pipe(plumber())
     .on('data', function (file) {
       const buferFile = Buffer.from(
@@ -46,7 +46,7 @@ function html() {
 function css() {
   const plugins = [autoprefixer(), mediaquery(), cssnano()];
   return gulp
-    .src('./blocks/**/*.css')
+    .src('./src/blocks/**/*.css')
     .pipe(plumber())
     .pipe(concat('bundle.css'))
     .pipe(postcss(plugins))
@@ -56,7 +56,7 @@ function css() {
 
 function images() {
   return gulp
-    .src('./images/**/*.{jpg,png,svg,gif,ico,webp,avif}')
+    .src('./src/images/**/*.{jpg,png,svg,gif,ico,webp,avif}')
     .pipe(gulp.dest('dist/images'))
     .pipe(browserSync.reload({ stream: true }));
 }
@@ -66,15 +66,15 @@ function clean() {
 }
 
 function watchFiles() {
-  gulp.watch(['./pages/**/*.pug'], pug);
-  gulp.watch(['./**/*.html'], html);
-  gulp.watch(['./vendor/**/*.css'], css);
-  gulp.watch(['./images/**/*.{jpg,png,svg,gif,ico,webp,avif}'], images);
+  gulp.watch(['./src/pages/**/*.pug'], pug);
+  gulp.watch(['./src/**/*.html'], html);
+  gulp.watch(['./src/vendor/**/*.css'], css);
+  gulp.watch(['./src/images/**/*.{jpg,png,svg,gif,ico,webp,avif}'], images);
 }
 
 function pug() {
   return gulp
-    .src('./pages/**/*.pug')
+    .src('./src/pages/**/*.pug')
     .pipe(gulpPug({ pretty: true }))
     .pipe(gulp.dest('dist/'))
     .pipe(browserSync.reload({ stream: true }));
