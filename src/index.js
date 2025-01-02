@@ -1,4 +1,5 @@
-import '.././styles/index.css';
+import {initialCards} from './scripts/cards.js';
+import './styles/index.css';
 
 const container = document.querySelector('.content');
 const cardContainer = container.querySelector('.places__list');
@@ -20,7 +21,7 @@ function addCardDeleteButtonListener(cardElement) {
 
 function fillCard(element) {
     const cardElement = addCardTemplateClone();
-    cardImage = cardElement.querySelector('.card__image');
+    const cardImage = cardElement.querySelector('.card__image');
     cardImage.src = element.link;
     cardImage.alt = element.name;
     cardElement.querySelector('.card__title').textContent = element.name;
