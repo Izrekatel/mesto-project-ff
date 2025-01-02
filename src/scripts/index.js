@@ -1,5 +1,5 @@
-import {initialCards} from './scripts/cards.js';
-import './styles/index.css';
+import {initialCards} from './cards.js';
+import '.././styles/index.css';
 
 const container = document.querySelector('.content');
 const cardContainer = container.querySelector('.places__list');
