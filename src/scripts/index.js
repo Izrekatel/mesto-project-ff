@@ -18,22 +18,22 @@ function addCardDeleteButtonListener(cardElement) {
     cardDeleteButton.addEventListener('click', () => deleteCard(cardElement));
 }
 
-function fillCard(link, name) {
+function fillCard(element) {
     const cardElement = addCardTemplateClone();
     cardImage = cardElement.querySelector('.card__image');
-    cardImage.src = link;
-    cardImage.alt = name;
-    cardElement.querySelector('.card__title').textContent = name;
+    cardImage.src = element.link;
+    cardImage.alt = element.name;
+    cardElement.querySelector('.card__title').textContent = element.name;
+    addCardDeleteButtonListener(cardElement);
     return cardElement;
 }
 
 function addCard(cardElement) {
     cardContainer.append(cardElement);
-    addCardDeleteButtonListener(cardElement);
     return cardElement;
 }
 
 initialCards.forEach(function (element) {
-    const createdCard = fillCard(element.link, element.name);
+    const createdCard = fillCard(element);
     addCard(createdCard);
 });
