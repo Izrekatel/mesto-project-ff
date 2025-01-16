@@ -4,10 +4,6 @@ function addCardTemplateClone() {
     return cardElement;
 }
 
-function deleteCard(cardElement) {
-    cardElement.remove();
-}
-
 export function fillCard(element) {
     const cardElement = addCardTemplateClone();
     const cardImage = cardElement.querySelector('.card__image');
@@ -17,24 +13,21 @@ export function fillCard(element) {
     return cardElement;
 }
 
-function addCardDeleteButtonListener(cardElement) {
-    const cardDeleteButton = cardElement.querySelector('.card__delete-button');
-    cardDeleteButton.addEventListener('click', () => deleteCard(cardElement));
-}
-
-export function addCard(cardElement, cardContainer, prepend=false) {
-    addCardDeleteButtonListener(cardElement);
+export function addCard({
+    cardElement,
+    cardContainer,
+    prepend = false,
+    cardDeleteButtonListener,
+    cardLikeButtonListener,
+    cardImageClickListener
+}) {
+    cardDeleteButtonListener(cardElement);
+    cardLikeButtonListener(cardElement);
+    cardImageClickListener(cardElement);
     if (prepend) {
         cardContainer.prepend(cardElement);
-    }
-    else {
+    } else {
         cardContainer.append(cardElement);
     }
     return cardElement;
 }
-
-export function addCardLikeButtonListener(evt) {
-    if (evt.target.classList.contains('card__like-button')) {
-        evt.target.classList.toggle('card__like-button_is-active');;
-    }
-};
