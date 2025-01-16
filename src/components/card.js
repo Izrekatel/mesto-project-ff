@@ -4,30 +4,29 @@ function addCardTemplateClone() {
     return cardElement;
 }
 
-export function fillCard(element) {
+function addCardDeleteButtonListener(cardElement) {
+    const cardDeleteButton = cardElement.querySelector('.card__delete-button');
+    cardDeleteButton.addEventListener('click', () => {
+        cardElement.remove();
+    });
+}
+
+function addCardLikeButtonListener(cardElement) {
+    const cardLikeButton = cardElement.querySelector('.card__like-button');
+    cardLikeButton.addEventListener('click', () => {
+        cardLikeButton.classList.toggle('card__like-button_is-active');
+    });
+};
+
+export function fillCard({element, cardImageClickListener}) {
     const cardElement = addCardTemplateClone();
     const cardImage = cardElement.querySelector('.card__image');
     cardImage.src = element.link;
     cardImage.alt = element.name;
     cardElement.querySelector('.card__title').textContent = element.name;
+    addCardDeleteButtonListener(cardElement);
+    addCardLikeButtonListener(cardElement);
+    cardImageClickListener(cardElement);
     return cardElement;
 }
 
-export function addCard({
-    cardElement,
-    cardContainer,
-    prepend = false,
-    cardDeleteButtonListener,
-    cardLikeButtonListener,
-    cardImageClickListener
-}) {
-    cardDeleteButtonListener(cardElement);
-    cardLikeButtonListener(cardElement);
-    cardImageClickListener(cardElement);
-    if (prepend) {
-        cardContainer.prepend(cardElement);
-    } else {
-        cardContainer.append(cardElement);
-    }
-    return cardElement;
-}
