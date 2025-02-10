@@ -14,7 +14,7 @@ from '../components/modal.js';
 import '.././styles/index.css';
 
 import {
-    enableValidation
+    enableValidation, clearValidation
 }
 from '../components/validation.js';
 
@@ -91,6 +91,7 @@ initialCards.forEach(function(element) {
 profileEditButton.addEventListener('click', () => {
     inputName.value = profileTtitle.textContent;
     inputDescription.value = profileDescription.textContent;
+    clearValidation({profileForm, validationConfig})
     showPopup(popupEdit);
 });
 profileAddButton.addEventListener('click', () => showPopup(popupNewCard));
