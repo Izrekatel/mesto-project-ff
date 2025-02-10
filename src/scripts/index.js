@@ -13,6 +13,11 @@ import {
 from '../components/modal.js';
 import '.././styles/index.css';
 
+import {
+    enableValidation
+}
+from '../components/validation.js';
+
 const container = document.querySelector('.content');
 const cardContainer = container.querySelector('.places__list');
 const profileEditButton = container.querySelector('.profile__edit-button');
@@ -91,3 +96,12 @@ profileEditButton.addEventListener('click', () => {
 profileAddButton.addEventListener('click', () => showPopup(popupNewCard));
 profileForm.addEventListener('submit', handleProfileFormSubmit);
 cardForm.addEventListener('submit', handleCardFormSubmit);
+
+enableValidation({
+    formSelector: '.popup__form',
+    inputSelector: '.popup__input',
+    submitButtonSelector: '.popup__button',
+    inactiveButtonClass: 'popup__button_disabled',
+    inputErrorClass: 'popup__input_type_error',
+    errorClass: 'popup__error_visible'
+});
