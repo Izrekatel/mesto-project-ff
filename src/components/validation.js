@@ -19,6 +19,12 @@ const hideInputError = (
 const checkInputValidity = (
     formElement, inputElement, inputErrorClass, errorClass
 ) => {
+    if(inputElement.validity.patternMismatch) {
+        inputElement.setCustomValidity(inputElement.dataset.errorMessage);
+    } else {
+       inputElement.setCustomValidity("");
+    } 
+
     if (!inputElement.validity.valid) {
         showInputError(formElement, inputElement,
             inputElement.validationMessage, inputErrorClass, errorClass
@@ -72,4 +78,7 @@ export const enableValidation = ({
             inactiveButtonClass, inputErrorClass, errorClass
         );
     });
+};
+
+export const clearValidation = ({profileForm, validationConfig}) => {
 };

@@ -8,10 +8,9 @@
   align-items: center;
   justify-content: center;
   background: #000;
-  border-radius: 2px;
   border: none;
   transition: visibility 0s, background 0.3s;
-  margin-top: 48px;
+  margin-top: 31.34px;
 }
 
 .popup__button:hover {
@@ -29,4 +28,7 @@
 .popup__button_disabled {
   opacity: 0.2;
   pointer-events: none;
+  color:  #000000;
+  background-color: white;
+  outline: 1px solid #000000;
 }
