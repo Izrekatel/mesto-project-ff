@@ -17,6 +17,8 @@ import {
     enableValidation, clearValidation
 }
 from '../components/validation.js';
+import { getIinitialCards, getUserData } from '../components/api.js';
+
 
 const container = document.querySelector('.content');
 const cardContainer = container.querySelector('.places__list');
@@ -108,3 +110,19 @@ profileForm.addEventListener('submit', handleProfileFormSubmit);
 cardForm.addEventListener('submit', handleCardFormSubmit);
 
 enableValidation(validationConfig);
+
+getIinitialCards()
+    .then((result) => {
+        console.log(result)
+    })
+    .catch((err) => {
+        console.log(err);
+    });
+
+getUserData()
+    .then((result) => {
+        console.log(result)
+    })
+    .catch((err) => {
+        console.log(err);
+    });
