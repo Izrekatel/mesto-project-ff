@@ -54,7 +54,6 @@ const setEventListeners = (formElement, inputSelector,
 ) => {
     const inputList = Array.from(formElement.querySelectorAll(inputSelector));
     const buttonElement = formElement.querySelector(submitButtonSelector);
-    toggleButtonState(inputList, buttonElement);
     inputList.forEach((inputElement) => {
         inputElement.addEventListener('input', function () {
             checkInputValidity(
@@ -80,5 +79,11 @@ export const enableValidation = ({
     });
 };
 
-export const clearValidation = ({profileForm, validationConfig}) => {
+export const clearValidation = ({form, validationConfig}) => {
+    const inputList = Array.from(form.querySelectorAll(validationConfig.inputSelector));
+    const buttonElement = form.querySelector(validationConfig.submitButtonSelector);
+    inputList.forEach((inputElement) => {
+        hideInputError(form, inputElement, validationConfig.inputErrorClass, validationConfig.errorClass);
+    })
+    toggleButtonState(inputList, buttonElement, validationConfig.inactiveButtonClass);
 };

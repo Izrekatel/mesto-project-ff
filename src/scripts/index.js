@@ -33,6 +33,14 @@ const inputDescription = profileForm.querySelector('.popup__input_type_descripti
 const cardForm = popupNewCard.querySelector('.popup__form');
 const inputCardName = cardForm.querySelector('.popup__input_type_card-name');
 const inputCardLink = cardForm.querySelector('.popup__input_type_url');
+const validationConfig = {
+    formSelector: '.popup__form',
+    inputSelector: '.popup__input',
+    submitButtonSelector: '.popup__button',
+    inactiveButtonClass: 'popup__button_disabled',
+    inputErrorClass: 'popup__input_type_error',
+    errorClass: 'popup__error_visible'
+}
 
 function handleProfileFormSubmit(evt) {
     evt.preventDefault();
@@ -78,6 +86,7 @@ function handleCardFormSubmit(evt) {
         prepend: true
     });
     cardForm.reset();
+    clearValidation({form: cardForm, validationConfig: validationConfig})
     closePopup(popupNewCard);
 }
 
@@ -91,18 +100,11 @@ initialCards.forEach(function(element) {
 profileEditButton.addEventListener('click', () => {
     inputName.value = profileTtitle.textContent;
     inputDescription.value = profileDescription.textContent;
-    clearValidation({profileForm, validationConfig})
+    clearValidation({form: profileForm, validationConfig: validationConfig})
     showPopup(popupEdit);
 });
 profileAddButton.addEventListener('click', () => showPopup(popupNewCard));
 profileForm.addEventListener('submit', handleProfileFormSubmit);
 cardForm.addEventListener('submit', handleCardFormSubmit);
 
-enableValidation({
-    formSelector: '.popup__form',
-    inputSelector: '.popup__input',
-    submitButtonSelector: '.popup__button',
-    inactiveButtonClass: 'popup__button_disabled',
-    inputErrorClass: 'popup__input_type_error',
-    errorClass: 'popup__error_visible'
-});
+enableValidation(validationConfig);
