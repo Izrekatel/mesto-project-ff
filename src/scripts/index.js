@@ -1,8 +1,4 @@
 import {
-    initialCards
-}
-from './cards.js';
-import {
     fillCard
 }
 from '../components/card.js';
@@ -17,7 +13,9 @@ import {
     enableValidation, clearValidation
 }
 from '../components/validation.js';
-import { getIinitialCards, getUserData } from '../components/api.js';
+import { getIinitialCards, getUserData, patchUserData, postNewCard }
+from '../components/api.js';
+import { co } from 'co';
 
 
 const container = document.querySelector('.content');
@@ -27,6 +25,7 @@ const popupEdit = document.querySelector('.popup_type_edit');
 const profileAddButton = container.querySelector('.profile__add-button');
 const popupNewCard = document.querySelector('.popup_type_new-card');
 const popupCardImage = document.querySelector('.popup_type_image');
+const profileImage = container.querySelector('.profile__image');
 const profileTtitle = container.querySelector('.profile__title');
 const profileDescription = container.querySelector('.profile__description');
 const profileForm = popupEdit.querySelector('.popup__form');
@@ -35,6 +34,10 @@ const inputDescription = profileForm.querySelector('.popup__input_type_descripti
 const cardForm = popupNewCard.querySelector('.popup__form');
 const inputCardName = cardForm.querySelector('.popup__input_type_card-name');
 const inputCardLink = cardForm.querySelector('.popup__input_type_url');
+const popupChangeAvatar = document.querySelector('.popup_type_change-avatar');
+const avatarCardForm = popupChangeAvatar.querySelector('.popup__form');
+const inputAvatarLink = avatarCardForm.querySelector('.popup__input_type_url');
+
 const validationConfig = {
     formSelector: '.popup__form',
     inputSelector: '.popup__input',
@@ -46,8 +49,13 @@ const validationConfig = {
 
 function handleProfileFormSubmit(evt) {
     evt.preventDefault();
-    profileTtitle.textContent = inputName.value;
-    profileDescription.textContent = inputDescription.value;
+    const newUserData = {
+        profileTtitle: inputName.value,
+        profileDescription: inputDescription.value
+    }
+    patchUserData(newUserData)
+    profileTtitle.textContent = newUserData.profileTtitle
+    profileDescription.textContent = newUserData.profileDescription
     closePopup(popupEdit);
 }
 
@@ -80,48 +88,50 @@ function handleCardFormSubmit(evt) {
     const element = {};
     element.name = inputCardName.value;
     element.link = inputCardLink.value;
-    addCard({
-        cardElement: fillCard({
-            element: element,
-            cardImageClickListener: addCardImageClickListener
-        }),
-        prepend: true
-    });
+    postNewCard(element)
+        .then(res => {
+            addCard({
+                cardElement: fillCard({
+                    element: res,
+                    cardImageClickListener: addCardImageClickListener,
+                    userId: profileTtitle.userId
+                }),
+                prepend: true
+            })
+        })
     cardForm.reset();
     clearValidation({form: cardForm, validationConfig: validationConfig})
     closePopup(popupNewCard);
 }
 
-initialCards.forEach(function(element) {
-    const createdCard = fillCard({
-        element: element,
-        cardImageClickListener: addCardImageClickListener
-    });
-    addCard({cardElement: createdCard});
-});
 profileEditButton.addEventListener('click', () => {
     inputName.value = profileTtitle.textContent;
     inputDescription.value = profileDescription.textContent;
     clearValidation({form: profileForm, validationConfig: validationConfig})
     showPopup(popupEdit);
 });
+
 profileAddButton.addEventListener('click', () => showPopup(popupNewCard));
 profileForm.addEventListener('submit', handleProfileFormSubmit);
 cardForm.addEventListener('submit', handleCardFormSubmit);
 
 enableValidation(validationConfig);
 
-getIinitialCards()
-    .then((result) => {
-        console.log(result)
-    })
-    .catch((err) => {
-        console.log(err);
-    });
+Promise.all([getUserData(), getIinitialCards()])
+    .then(([userData, initialCards]) => {
+        profileTtitle.textContent = userData.name;
+        profileDescription.textContent = userData.about;
+        profileImage.style.backgroundImage = `url('${userData.avatar}')`;
+        profileTtitle.userId = userData._id
 
-getUserData()
-    .then((result) => {
-        console.log(result)
+        initialCards.forEach(function(element) {
+            const createdCard = fillCard({
+                element: element,
+                cardImageClickListener: addCardImageClickListener, 
+                userId: userData._id
+            });
+            addCard({cardElement: createdCard});
+        });
     })
     .catch((err) => {
         console.log(err);
