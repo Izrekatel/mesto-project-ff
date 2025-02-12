@@ -20,3 +20,7 @@
     margin-right: 0;
   }
 }
+
+.profile__image:hover {
+  cursor: url('../../../images/Vector.png'), auto;
+}
