@@ -13,10 +13,8 @@ import {
     enableValidation, clearValidation
 }
 from '../components/validation.js';
-import { getIinitialCards, getUserData, patchUserData, postNewCard }
+import { getIinitialCards, getUserData, patchUserData, postNewCard, patchAvatar }
 from '../components/api.js';
-import { co } from 'co';
-
 
 const container = document.querySelector('.content');
 const cardContainer = container.querySelector('.places__list');
@@ -53,7 +51,12 @@ function handleProfileFormSubmit(evt) {
         profileTtitle: inputName.value,
         profileDescription: inputDescription.value
     }
+    const popupButton = popupChangeAvatar.querySelector('.popup__button')
+    const buttonText = popupButton.textContent
+    renderLoading(popupButton)
     patchUserData(newUserData)
+        .finally (() => {renderLoading(popupButton, buttonText)
+        })
     profileTtitle.textContent = newUserData.profileTtitle
     profileDescription.textContent = newUserData.profileDescription
     closePopup(popupEdit);
@@ -88,6 +91,9 @@ function handleCardFormSubmit(evt) {
     const element = {};
     element.name = inputCardName.value;
     element.link = inputCardLink.value;
+    const popupButton = popupChangeAvatar.querySelector('.popup__button')
+    const buttonText = popupButton.textContent
+    renderLoading(popupButton)
     postNewCard(element)
         .then(res => {
             addCard({
@@ -99,9 +105,32 @@ function handleCardFormSubmit(evt) {
                 prepend: true
             })
         })
+        .finally (() => {renderLoading(popupButton, buttonText)
+        })
     cardForm.reset();
     clearValidation({form: cardForm, validationConfig: validationConfig})
     closePopup(popupNewCard);
+}
+
+
+function handleChangeAvatarFormSubmit(evt) {
+    evt.preventDefault();
+    const popupButton = popupChangeAvatar.querySelector('.popup__button')
+    const buttonText = popupButton.textContent
+    renderLoading(popupButton)
+    patchAvatar(inputAvatarLink.value)
+        .then(res => {
+            profileImage.style.backgroundImage = `url('${res.avatar}')`;
+        })
+        .finally (() => {renderLoading(popupButton, buttonText)
+        })
+        avatarCardForm.reset();
+    clearValidation({form: avatarCardForm, validationConfig: validationConfig})
+    closePopup(popupChangeAvatar);
+}
+
+function renderLoading(popupButton, text = "Coхранение...") {
+    popupButton.textContent = text
 }
 
 profileEditButton.addEventListener('click', () => {
@@ -114,6 +143,8 @@ profileEditButton.addEventListener('click', () => {
 profileAddButton.addEventListener('click', () => showPopup(popupNewCard));
 profileForm.addEventListener('submit', handleProfileFormSubmit);
 cardForm.addEventListener('submit', handleCardFormSubmit);
+profileImage.addEventListener('click', () => showPopup(popupChangeAvatar));
+avatarCardForm.addEventListener('submit', handleChangeAvatarFormSubmit);
 
 enableValidation(validationConfig);
 

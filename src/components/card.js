@@ -29,11 +29,11 @@ function addCardLikeButtonListener(cardElement, element, userId) {
     cardLikeButton.addEventListener('click', () => {
         if (cardLikeButton.classList.contains('card__like-button_is-active')) {
             deleteLike(element._id)
-            cardLikeCounter.textContent -= 1;
+            .then((element) => {cardLikeCounter.textContent = element.likes.length})
         }
         else {
             putLike(element._id)
-            cardLikeCounter.textContent += 1;
+            .then((element) => {cardLikeCounter.textContent = element.likes.length})
         }
         cardLikeButton.classList.toggle('card__like-button_is-active');
 
