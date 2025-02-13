@@ -6,109 +6,47 @@ const config = {
   },
 }
 
-export const getUserData = () => {
-  return fetch(`${config.baseUrl}/users/me`, {
-    headers: config.headers,
-  }).then((res) => {
+const checkApiAnswer = (res) => {
     if (res.ok) {
-      return res.json()
+        return res.json();
     }
-    return Promise.reject(`Ошибка: ${res.status}`)
-  })
-}
+    return Promise.reject(`Ошибка: ${res.status}`);
+};
 
-export const getIinitialCards = () => {
-  return fetch(`${config.baseUrl}/cards`, {
+const makeRequest = (url, method, body = null) => {
+  const options = {
+    method,
     headers: config.headers,
-  }).then((res) => {
-    if (res.ok) {
-      return res.json()
-    }
-    return Promise.reject(`Ошибка: ${res.status}`)
-  })
-}
+  };
+  if (body) {
+    options.body = JSON.stringify(body);
+  }
+  return fetch(`${config.baseUrl}${url}`, options).then(checkApiAnswer);
+};
 
-export const patchUserData = (newUserData) => {
-  console.log(newUserData.profileTtitle)
-  return fetch(`${config.baseUrl}/users/me`, {
-    method: "PATCH",
-    headers: config.headers,
-    body: JSON.stringify({
-      name: newUserData.profileTtitle,
+export const getUserData = () => makeRequest("/users/me", "GET");
+
+
+export const getInitialCards = () => makeRequest("/cards", "GET");
+
+export const patchUserData = (newUserData) =>
+    makeRequest("/users/me", "PATCH", {
+      name: newUserData.profileTitle,
       about: newUserData.profileDescription,
-    }),
-  }).then((res) => {
-    if (res.ok) {
-      return res.json()
-    }
-    return Promise.reject(`Ошибка: ${res.status}`)
-  })
-}
+    });
 
-export const postNewCard = (newCardData) => {
-  return fetch(`${config.baseUrl}/cards`, {
-    method: "POST",
-    headers: config.headers,
-    body: JSON.stringify({
-      name: newCardData.name,
-      link: newCardData.link,
-    }),
-  }).then((res) => {
-    if (res.ok) {
-      return res.json()
-    }
-    return Promise.reject(`Ошибка: ${res.status}`)
-  })
-}
+export const postNewCard = (newCardData) =>
+    makeRequest("/cards", "POST", {
+        name: newCardData.name,
+        link: newCardData.link,
+    });
 
-export const deleteCard = (cardId) => {
-  return fetch(`${config.baseUrl}/cards/${cardId}`, {
-    method: "DELETE",
-    headers: config.headers,
-  }).then((res) => {
-    if (res.ok) {
-      return res.json()
-    }
-    return Promise.reject(`Ошибка: ${res.status}`)
-  })
-}
+export const deleteCard = (cardId) => makeRequest(`/cards/${cardId}`, "DELETE");
 
-export const putLike = (cardId) => {
-  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
-    method: "PUT",
-    headers: config.headers,
-  }).then((res) => {
-    if (res.ok) {
-      return res.json()
-    }
-    return Promise.reject(`Ошибка: ${res.status}`)
-  })
-}
+export const putLike = (cardId) => makeRequest(`/cards/likes/${cardId}`, "PUT");
 
-export const deleteLike = (cardId) => {
-  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
-    method: "DELETE",
-    headers: config.headers,
-  }).then((res) => {
-    if (res.ok) {
-      return res.json()
-    }
-    return Promise.reject(`Ошибка: ${res.status}`)
-  })
-}
+export const deleteLike = (cardId) =>
+    makeRequest(`/cards/likes/${cardId}`, "DELETE");
 
-export const patchAvatar = (avatar) => {
-  console.log(avatar)
-  return fetch(`${config.baseUrl}/users/me/avatar`, {
-    method: "PATCH",
-    headers: config.headers,
-    body: JSON.stringify({
-      avatar: avatar,
-    }),
-  }).then((res) => {
-    if (res.ok) {
-      return res.json()
-    }
-    return Promise.reject(`Ошибка: ${res.status}`)
-  })
-}
+export const patchAvatar = (avatar) =>
+    makeRequest("/users/me/avatar", "PATCH", { avatar });

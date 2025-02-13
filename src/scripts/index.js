@@ -1,14 +1,14 @@
 import { fillCard } from "../components/card.js"
-import { showPopup, closePopup } from "../components/modal.js"
+import { showPopup, closePopup, addClosePopupListener } from "../components/modal.js"
 import ".././styles/index.css"
 
 import { enableValidation, clearValidation } from "../components/validation.js"
 import {
-  getIinitialCards,
+  getInitialCards,
   getUserData,
   patchUserData,
   postNewCard,
-  patchAvatar,
+  patchAvatar
 } from "../components/api.js"
 
 const container = document.querySelector(".content")
@@ -19,7 +19,7 @@ const profileAddButton = container.querySelector(".profile__add-button")
 const popupNewCard = document.querySelector(".popup_type_new-card")
 const popupCardImage = document.querySelector(".popup_type_image")
 const profileImage = container.querySelector(".profile__image")
-const profileTtitle = container.querySelector(".profile__title")
+const profileTitle = container.querySelector(".profile__title")
 const profileDescription = container.querySelector(".profile__description")
 const profileForm = popupEdit.querySelector(".popup__form")
 const inputName = profileForm.querySelector(".popup__input_type_name")
@@ -32,6 +32,7 @@ const inputCardLink = cardForm.querySelector(".popup__input_type_url")
 const popupChangeAvatar = document.querySelector(".popup_type_change-avatar")
 const avatarCardForm = popupChangeAvatar.querySelector(".popup__form")
 const inputAvatarLink = avatarCardForm.querySelector(".popup__input_type_url")
+var userId = ""
 
 const validationConfig = {
   formSelector: ".popup__form",
@@ -45,18 +46,24 @@ const validationConfig = {
 function handleProfileFormSubmit(evt) {
   evt.preventDefault()
   const newUserData = {
-    profileTtitle: inputName.value,
+    profileTitle: inputName.value,
     profileDescription: inputDescription.value,
   }
   const popupButton = popupChangeAvatar.querySelector(".popup__button")
   const buttonText = popupButton.textContent
   renderLoading(popupButton)
-  patchUserData(newUserData).finally(() => {
-    renderLoading(popupButton, buttonText)
-  })
-  profileTtitle.textContent = newUserData.profileTtitle
-  profileDescription.textContent = newUserData.profileDescription
-  closePopup(popupEdit)
+  patchUserData(newUserData)
+      .then(
+        () => {
+            profileTitle.textContent = newUserData.profileTitle
+            profileDescription.textContent = newUserData.profileDescription
+            renderLoading(popupButton, buttonText)
+            closePopup(popupEdit)
+        }
+      )
+      .catch((err) => {
+          console.log("Ошибка при изменении пользователя:", err);
+      })
 }
 
 function addCard({ cardElement, prepend = false }) {
@@ -68,8 +75,7 @@ function addCard({ cardElement, prepend = false }) {
   return cardElement
 }
 
-function addCardImageClickListener(cardElement) {
-  const cardImage = cardElement.querySelector(".card__image")
+function addCardImageClickListener(cardImage) {
   cardImage.addEventListener("click", () => {
     const popupImg = popupCardImage.querySelector(".popup__image")
     const popupCaption = document.querySelector(".popup__caption")
@@ -94,17 +100,18 @@ function handleCardFormSubmit(evt) {
         cardElement: fillCard({
           element: res,
           cardImageClickListener: addCardImageClickListener,
-          userId: profileTtitle.userId,
+          userId: userId,
         }),
         prepend: true,
-      })
+      });
+      renderLoading(popupButton, buttonText);
+      cardForm.reset();
+      clearValidation({ form: cardForm, validationConfig: validationConfig });
+      closePopup(popupNewCard);
     })
-    .finally(() => {
-      renderLoading(popupButton, buttonText)
+    .catch((err) => {
+      console.log("Ошибка при создании карточки:", err);
     })
-  cardForm.reset()
-  clearValidation({ form: cardForm, validationConfig: validationConfig })
-  closePopup(popupNewCard)
 }
 
 function handleChangeAvatarFormSubmit(evt) {
@@ -118,12 +125,10 @@ function handleChangeAvatarFormSubmit(evt) {
       avatarCardForm.reset();
       clearValidation({ form: avatarCardForm, validationConfig: validationConfig });
       closePopup(popupChangeAvatar);
+      renderLoading(popupButton, buttonText)
     })
     .catch((err) => {
       console.log("Ошибка при обновлении аватара:", err);
-    })
-    .finally(() => {
-      renderLoading(popupButton, buttonText)
     })
 }
 
@@ -132,7 +137,7 @@ function renderLoading(popupButton, text = "Coхранение...") {
 }
 
 profileEditButton.addEventListener("click", () => {
-  inputName.value = profileTtitle.textContent
+  inputName.value = profileTitle.textContent
   inputDescription.value = profileDescription.textContent
   clearValidation({ form: profileForm, validationConfig: validationConfig })
   showPopup(popupEdit)
@@ -146,22 +151,26 @@ avatarCardForm.addEventListener("submit", handleChangeAvatarFormSubmit)
 
 enableValidation(validationConfig)
 
-Promise.all([getUserData(), getIinitialCards()])
+Promise.all([getUserData(), getInitialCards()])
   .then(([userData, initialCards]) => {
-    profileTtitle.textContent = userData.name
+    profileTitle.textContent = userData.name
     profileDescription.textContent = userData.about
     profileImage.style.backgroundImage = `url('${userData.avatar}')`
-    profileTtitle.userId = userData._id
-
+    userId = userData._id
     initialCards.forEach(function (element) {
       const createdCard = fillCard({
         element: element,
         cardImageClickListener: addCardImageClickListener,
-        userId: userData._id,
+        userId: userId,
       })
       addCard({ cardElement: createdCard })
     })
   })
   .catch((err) => {
-    console.log(err)
+    console.log("Ошибка при создании начальных карточек:", err);
+  })
+
+  const popups = document.querySelectorAll(".popup")
+  document.querySelectorAll(".popup").forEach(function (popup) {
+      addClosePopupListener(popup);
   })
