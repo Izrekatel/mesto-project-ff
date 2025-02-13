@@ -7,17 +7,26 @@ function addCardTemplateClone() {
 }
 
 function addCardDeleteButtonListener(cardElement, cardId) {
-  const cardDeleteButton = cardElement.querySelector(".card__delete-button")
-  cardDeleteButton.addEventListener("click", () => {
-    deleteCard(cardId)
-    cardElement.remove()
-  })
+    const cardDeleteButton = cardElement.querySelector(".card__delete-button")
+    if (cardDeleteButton) {
+        cardDeleteButton.addEventListener("click", () => {
+            deleteCard(cardId)
+                .then (
+                    () => {cardElement.remove();}
+                )
+                .catch((err) => {
+                    console.log("Ошибка при удалении карты:", err);
+                })
+        })
+    }
 }
 
 function addCardLikeButtonListener(cardElement, element, userId) {
   const cardLikeButton = cardElement.querySelector(".card__like-button")
   const cardLikeCounter = cardElement.querySelector(".card__like-counter")
 
+  if (!cardLikeButton || !cardLikeCounter) return;
+  
   const isLiked = element.likes.some((like) => like._id === userId)
   if (isLiked) {
     cardLikeButton.classList.add("card__like-button_is-active")
@@ -29,19 +38,26 @@ function addCardLikeButtonListener(cardElement, element, userId) {
     if (cardLikeButton.classList.contains("card__like-button_is-active")) {
       deleteLike(element._id).then((element) => {
         cardLikeCounter.textContent = element.likes.length
-      })
+        cardLikeButton.classList.toggle("card__like-button_is-active")
+      }).catch((err) => {
+        console.log("Ошибка при удалении лайка:", err);
+    })
     } else {
       putLike(element._id).then((element) => {
         cardLikeCounter.textContent = element.likes.length
-      })
+        cardLikeButton.classList.toggle("card__like-button_is-active")
+      }).catch((err) => {
+        console.log("Ошибка при добавлении лайка:", err);
+    })
     }
-    cardLikeButton.classList.toggle("card__like-button_is-active")
   })
 }
 
 function disableDeleteButton(cardElement) {
   const cardDeleteButton = cardElement.querySelector(".card__delete-button")
-  cardDeleteButton.classList.add("card__delete-button-disabled")
+  if (cardDeleteButton) {
+      cardDeleteButton.classList.add("card__delete-button-disabled");
+  }
 }
 
 export function fillCard({ element, cardImageClickListener, userId }) {
@@ -57,7 +73,7 @@ export function fillCard({ element, cardImageClickListener, userId }) {
     addCardDeleteButtonListener(cardElement, element._id)
   }
   addCardLikeButtonListener(cardElement, element, userId)
-  cardImageClickListener(cardElement)
+  cardImageClickListener(cardImage)
   cardLikeCounter.textContent = element.likes.length
   return cardElement
 }

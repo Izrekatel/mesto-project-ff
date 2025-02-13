@@ -1,4 +1,4 @@
-function addClosePopupListener(popup) {
+export function addClosePopupListener(popup) {
     popup.addEventListener("click", function (evt) {
       if (
         evt.target.classList.contains("popup") ||
@@ -20,7 +20,6 @@ function addClosePopupListener(popup) {
   export function showPopup(popup) {
     popup.classList.add("popup_is-animated")
     popup.classList.add("popup_is-opened")
-    addClosePopupListener(popup)
     document.addEventListener("keydown", addDocumentEscapeListener)
   }
   
