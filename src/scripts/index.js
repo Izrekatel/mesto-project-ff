@@ -57,13 +57,16 @@ function handleProfileFormSubmit(evt) {
         () => {
             profileTitle.textContent = newUserData.profileTitle
             profileDescription.textContent = newUserData.profileDescription
-            renderLoading(popupButton, buttonText)
             closePopup(popupEdit)
         }
       )
       .catch((err) => {
           console.log("Ошибка при изменении пользователя:", err);
       })
+      .finally(
+        () => {
+          renderLoading(popupButton, buttonText)},
+      )
 }
 
 function addCard({ cardElement, prepend = false }) {
@@ -104,7 +107,6 @@ function handleCardFormSubmit(evt) {
         }),
         prepend: true,
       });
-      renderLoading(popupButton, buttonText);
       cardForm.reset();
       clearValidation({ form: cardForm, validationConfig: validationConfig });
       closePopup(popupNewCard);
@@ -112,6 +114,10 @@ function handleCardFormSubmit(evt) {
     .catch((err) => {
       console.log("Ошибка при создании карточки:", err);
     })
+    .finally(
+      () => {
+        renderLoading(popupButton, buttonText)},
+    )
 }
 
 function handleChangeAvatarFormSubmit(evt) {
@@ -125,11 +131,14 @@ function handleChangeAvatarFormSubmit(evt) {
       avatarCardForm.reset();
       clearValidation({ form: avatarCardForm, validationConfig: validationConfig });
       closePopup(popupChangeAvatar);
-      renderLoading(popupButton, buttonText)
     })
     .catch((err) => {
       console.log("Ошибка при обновлении аватара:", err);
     })
+    .finally(
+      () => {
+        renderLoading(popupButton, buttonText)},
+    )
 }
 
 function renderLoading(popupButton, text = "Coхранение...") {
